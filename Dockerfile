@@ -12,6 +12,7 @@ FROM yash268925/docker-neovim
 ENV PATH=${NEOVIM_PREFIX}/bin:$PATH
 
 COPY --from=base /etc/skel /etc/skel
+RUN apk add sudo
 
 ARG UID=1000
 ARG GID=1000
@@ -23,6 +24,8 @@ ONBUILD ARG UNAME
 
 ONBUILD RUN addgroup -S ${UNAME} -g ${GID} \
          && adduser -S ${UNAME} -u ${UID} -G ${UNAME} \
+         && echo "${UNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+         && echo "${UNAME}:${UNAME}" | chpasswd \
          && chmod -R go+rw ${NEOVIM_PREFIX}/share
 
 ONBUILD USER ${UID}:${GID}
