@@ -9,19 +9,23 @@ RUN apk add curl \
 
 FROM yash268925/docker-neovim
 
-ARG UID=1000
-ARG GID=1000
-ARG UNAME=foxtail
-
 ENV PATH=${NEOVIM_PREFIX}/bin:$PATH
 
 COPY --from=base /etc/skel /etc/skel
 
-RUN addgroup -S ${UNAME} -g ${GID} \
- && adduser -S ${UNAME} -u ${UID} -G ${UNAME} \
- && chmod -R go+rw ${NEOVIM_PREFIX}/share
+ARG UID=1000
+ARG GID=1000
+ARG UNAME=foxtail
 
-USER ${UID}:${GID}
-WORKDIR /home/${UNAME}
+ONBUILD ARG UID
+ONBUILD ARG GID
+ONBUILD ARG UNAME
 
-RUN ${NEOVIM_PREFIX}/bin/nvim +PlugInstall +q +q
+ONBUILD RUN addgroup -S ${UNAME} -g ${GID} \
+         && adduser -S ${UNAME} -u ${UID} -G ${UNAME} \
+         && chmod -R go+rw ${NEOVIM_PREFIX}/share
+
+ONBUILD USER ${UID}:${GID}
+ONBUILD WORKDIR /home/${UNAME}
+
+ONBUILD RUN ${NEOVIM_PREFIX}/bin/nvim +PlugInstall +q +q
