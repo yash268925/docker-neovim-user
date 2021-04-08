@@ -12,7 +12,9 @@ FROM yash268925/docker-neovim
 ENV PATH=${NEOVIM_PREFIX}/bin:$PATH
 
 COPY --from=base /etc/skel /etc/skel
-RUN apk add sudo
+RUN apk add \
+    sudo \
+    git
 
 ONBUILD ARG UID
 ONBUILD ARG GID
@@ -27,4 +29,4 @@ ONBUILD RUN addgroup -S ${UNAME} -g ${GID} \
 ONBUILD USER ${UID}:${GID}
 ONBUILD WORKDIR /home/${UNAME}
 
-ONBUILD RUN ${NEOVIM_PREFIX}/bin/nvim +PlugInstall +q +q
+ONBUILD RUN ${NEOVIM_PREFIX}/bin/nvim --headless +PlugInstall +q +q
