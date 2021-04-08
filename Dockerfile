@@ -14,10 +14,6 @@ ENV PATH=${NEOVIM_PREFIX}/bin:$PATH
 COPY --from=base /etc/skel /etc/skel
 RUN apk add sudo
 
-ARG UID=1000
-ARG GID=1000
-ARG UNAME=foxtail
-
 ONBUILD ARG UID
 ONBUILD ARG GID
 ONBUILD ARG UNAME
