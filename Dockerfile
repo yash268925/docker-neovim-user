@@ -7,7 +7,7 @@ RUN apk add curl \
  && curl -fLo /etc/skel/.config/nvim/autoload/plug.vim --create-dirs \
       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-FROM yash268925/docker-neovim
+FROM yash268925/neovim
 
 ENV PATH=${NEOVIM_PREFIX}/bin:$PATH
 
