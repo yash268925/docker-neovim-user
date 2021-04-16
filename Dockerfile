@@ -9,7 +9,7 @@ RUN apk add curl \
 
 FROM yash268925/neovim
 
-ENV PATH=${NEOVIM_PREFIX}/bin:$PATH
+ENV PATH=$NEOVIM_PREFIX/bin:$PATH
 
 COPY --from=base /etc/skel /etc/skel
 RUN apk add \
@@ -19,14 +19,17 @@ RUN apk add \
 ONBUILD ARG UID
 ONBUILD ARG GID
 ONBUILD ARG UNAME
+ONBUILD ENV UID ${UID:-1000}
+ONBUILD ENV GID ${GID:-1000}
+ONBUILD ENV UNAME ${UNAME:-user}
 
-ONBUILD RUN addgroup -S ${UNAME} -g ${GID} \
-         && adduser -S ${UNAME} -u ${UID} -G ${UNAME} \
-         && echo "${UNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
-         && echo "${UNAME}:${UNAME}" | chpasswd \
-         && chmod -R go+rw ${NEOVIM_PREFIX}/share
+ONBUILD RUN addgroup -S $UNAME -g $GID \
+         && adduser -S $UNAME -u $UID -G $UNAME \
+         && echo "$UNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+         && echo "$UNAME:$UNAME" | chpasswd \
+         && chmod -R go+rw $NEOVIM_PREFIX/share
 
-ONBUILD USER ${UID}:${GID}
-ONBUILD WORKDIR /home/${UNAME}
+ONBUILD USER $UID:$GID
+ONBUILD WORKDIR /home/$UNAME
 
-ONBUILD RUN ${NEOVIM_PREFIX}/bin/nvim --headless +PlugInstall +q +q
+ONBUILD RUN $NEOVIM_PREFIX/bin/nvim --headless +PlugInstall +q +q
